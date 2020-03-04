@@ -132,7 +132,7 @@ def main(argv):
                             data.write("\n")
 
                             data.write("-{} ".format(proposicion_vecino))
-                            data.write("-{} ".format(proposicion_elemento))
+                            data.write("-{} 0".format(proposicion_elemento))
                             data.write("\n")
                             clausulas+=1
                     
