@@ -53,7 +53,7 @@ def get_position(prop):
 
 
 def get_direcciones(tablero, posicion):
-    direcciones = {'up':[0,1], 'down':[0,-1], 'right':[1,0],'left':[-1,0]}
+    direcciones = {'left':[0,-1],'up':[-1,0], 'right':[0,1], 'down':[1,0]}
     print("[*] Computing all posible directions for",posicion)
     result = {}
     #Para todas las direcciones que existen
@@ -67,6 +67,12 @@ def get_direcciones(tablero, posicion):
             #Si es valida la añadimos al resultado
             result[direccion]=new_position
     return result
+
+def modulo (a):
+    if (a == 12): 
+        return 0
+    else: 
+        return a
 
 def main(argv):
     if (len(argv) != 2):
@@ -91,13 +97,12 @@ def main(argv):
 
         print("[*] Starting HourMaze for cols =",NCOL,"rows =",NFIL)
         tablero = [line.split() for line in table_file]
-        
-        #Diccionario de direcciones
-        direcciones = {'up':[0,1], 'down':[0,-1], 'right':[1,0],'left':[-1,0]}
-        print(direcciones['up'])
 
+                
         #Parseamos el tablero
         fila = 1
+        #El problema es que estamos parseando cosas repetidas, por ejemplo estamos anotando que 1 en (1,1) -> 2 en (1,2)
+        #Pero luego en la segunda pasada estamos anotando que un 3 en (2,2) -> 4 en (1,2)
         for row in tablero:
             columna = 1
             for element in row:
@@ -123,16 +128,15 @@ def main(argv):
                         #"SI EL VALOR DE MI VECINO ES 1 ENTOINCES MI VALOR ES 2"
                         #CNF: (valor 1 en vecino) -> (valor es 2) = -(valor 1 vecino) v -(valor 2) = -(valor 1 vecino) -(valor 2)
                         for i in range(1,13):
-                            print("Indicando la restriccion para n =",i,"en",[fila, columna],"en direccion",direccion,":")
+                            print("Si soy",[fila, columna],"y mi vecino es",[vecino[0],vecino[1]],"y mi vecino tiene valor",i,"entonces yo tengo valor",modulo(i)+1)
                             proposicion_vecino = get_proposition(vecino[0], vecino[1], i)
-                            proposicion_elemento = get_proposition(fila, columna,((i+1)%12))
+                            proposicion_elemento = get_proposition(fila, columna, modulo(i)+1)
+                            print(proposicion_vecino,"->",proposicion_elemento)
+                            print(" -{} -{} 0".format(proposicion_elemento, proposicion_vecino))
                             print("Para valor de",get_position(proposicion_elemento),"ponemos la restriccion de",get_position(proposicion_vecino))
 
-                            data.write("c [*] Indicando la restriccion para n = {} en {} en direccion {}: ".format(i, [fila,columna],direccion))
-                            data.write("\n")
-
                             data.write("-{} ".format(proposicion_vecino))
-                            data.write("-{} 0".format(proposicion_elemento))
+                            data.write("{} 0".format(proposicion_elemento))
                             data.write("\n")
                             clausulas+=1
                     
@@ -143,6 +147,27 @@ def main(argv):
         fo.write(data.getvalue())
         fo.close()
         table_file.close()
+        
+        os.system("clasp --verbose=0 clasp.txt>sol.txt")
+
+        fs = open("sol.txt","r");
+        lines = fs.readlines()
+        for line in lines:
+            if (line[0] == 'v'):
+                solucion = ""
+                for proposition in line[1:].split(' '):
+                    try:
+                        if (int(proposition) > 0):
+                            valor = get_position(int(proposition))
+                            row = (valor[0])
+                            col = (valor[1])
+                            val = (valor[2])
+                            solucion = solucion + "{}:{} ".format([row,col],val)
+                    except:
+                        pass
+                print(solucion)
+
+        fs.close()
 
 
 if __name__ == "__main__": 
