@@ -1,0 +1,40 @@
+%declarar elementos
+hours(1..12).
+
+%tratamos el tablero como un grafo
+vtx(1..6).
+edge(1,4).
+edge(1,2).
+edge(2,1).
+edge(3,6).
+edge(3,2).
+edge(4,1).
+edge(4,5).
+edge(5,4).
+edge(6,3).
+edge(6,5).
+
+%casillas ya indicadas
+element(1, 1).
+
+%generar tablero
+6 {element(X,V) : vtx(X), hours(V)}.
+
+%%%%%%%%%%  RESTRICCIONES  %%%%%%%%%%%%%
+
+%restriccion de solo un elemento por vertex
+:-element(X, V), element(X, W), W!=V.
+
+%definimos la condicion de 'numero adyacente'
+adj(X,Y) :- hours(X), hours(Y), |X-Y|==1.
+
+%definimos la restriccion de que los elementos de nodos que tengan un edge tienen que ser adyacentes
+%  "no puede ser que dado un nodo x con hora v y un nodo y con hora w y que los nodos x,y forman un edge
+%   tengan un valor de hora v y hora w que no sea adyacente"
+:-element(X,V), element(Y, W), edge(X, Y), not adj(W,V).
+
+%definimos la restriccion del numero de elementos
+% " no puede ser que dado un nodo x con hora v y un nodo y con hora w, w sea igual a v SI el numero de veces que aparece v es 
+% " menor a m*n"
+
+#show element/2.
