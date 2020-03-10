@@ -28,6 +28,10 @@ element(1, 1).
 %definimos la condicion de 'numero adyacente'
 adj(X,Y) :- hours(X), hours(Y), |X-Y|==1.
 
+%count = numero elementos iguales
+count(S) :- #sum{X: element(V,X), element(W,X), W!=V} = S.
+
+
 %definimos la restriccion de que los elementos de nodos que tengan un edge tienen que ser adyacentes
 %  "no puede ser que dado un nodo x con hora v y un nodo y con hora w y que los nodos x,y forman un edge
 %   tengan un valor de hora v y hora w que no sea adyacente"
@@ -38,3 +42,4 @@ adj(X,Y) :- hours(X), hours(Y), |X-Y|==1.
 % " menor a m*n"
 
 #show element/2.
+#show count/1.
