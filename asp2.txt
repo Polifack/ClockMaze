@@ -2,10 +2,13 @@
 hours(1..12).
 
 %tratamos el tablero como un grafo
-vtx(1..6).
+vtx(1).
+vtx(2).
+vtx(3).
+vtx(4).
+vtx(5).
+vtx(6).
 edge(1,4).
-edge(1,2).
-edge(2,1).
 edge(3,6).
 edge(3,2).
 edge(4,1).
@@ -28,9 +31,8 @@ element(1, 1).
 %definimos la condicion de 'numero adyacente'
 adj(X,Y) :- hours(X), hours(Y), |X-Y|==1.
 
-%count = numero elementos iguales
-count(S) :- #sum{X: element(V,X), element(W,X), W!=V} = S.
-
+%contamos el numero de veces que se repite un elemento, lo asignamos a s y establecemos lo que debe valer S
+S=1 :- #count{X: element(V,X), element(W,X), W!=V} = S.
 
 %definimos la restriccion de que los elementos de nodos que tengan un edge tienen que ser adyacentes
 %  "no puede ser que dado un nodo x con hora v y un nodo y con hora w y que los nodos x,y forman un edge

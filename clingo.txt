@@ -1,0 +1,21 @@
+hours(1..12).
+vtx(1).
+vtx(2).
+vtx(3).
+vtx(4).
+vtx(5).
+vtx(6).
+edge(1,4.0).
+edge(3,6.0).
+edge(3,2.0).
+edge(4,1.0).
+edge(4,5.0).
+edge(5,4.0).
+edge(6,3.0).
+edge(6,5.0).
+element(2.5,1).
+6{element(X,V) : vtx(X), hours(V)}.
+:-element(X, V), element(X, W), W!=V.
+adj(X,Y) :- hours(X), hours(Y), |X-Y|==1.
+:-element(X,V), element(Y, W), edge(X, Y), not adj(W,V).
+#show element/2.
